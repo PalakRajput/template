@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <include resource="org/springframework/boot/logging/logback/defaults.xml"/>
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <layout class="ch.qos.logback.contrib.json.classic.JsonLayout">
+            <jsonFormatter class="ch.qos.logback.contrib.jackson.JacksonJsonFormatter">
+                <prettyPrint>true</prettyPrint>
+            </jsonFormatter>
+            <timestampFormat>yyyy-MM-dd' 'HH:mm:ss.SSS</timestampFormat>
+            <timestampFormatTimezoneId>UTC</timestampFormatTimezoneId>
+            <includeContextName>false</includeContextName>
+        </layout>
+        <encoder>
+            <pattern>{"date":"%date{ISO8601}","severity":"%level","service":"TEMPLATE","class":"%logger{40}","message":"%replace(%message){'[\r\n]+',' '}","method":"%method","Exception":"%replace(%ex){'[\r\n]+',' '}%nopex"}%n</pattern>
+        </encoder>
+    </appender>
+    <root level="${LOG_LEVEL:-INFO}">
+        <appender-ref ref="STDOUT"/>
+    </root>
+</configuration>
