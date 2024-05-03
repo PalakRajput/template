@@ -5,7 +5,9 @@ import com.demo.template.entity.TemplateColumn;
 import com.demo.template.entity.TemplateRow;
 import com.demo.template.repository.TemplateRepository;
 import jakarta.transaction.Transactional;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -14,17 +16,24 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/template")
+@Slf4j
 public class TemplateController {
 
     @Autowired
     private TemplateRepository templateRepository;
+    @Value("${spring.application.name}")
+    String name;
 
     @GetMapping
     public ResponseEntity<Object> getAllTemplates() {
+        log.info("Fetch all templates.");
+        log.info("Reading values from app settings: {}", name);
         List<Template> templates = templateRepository.findAll();
         if (templates.isEmpty()) {
+            log.error("No templates found.");
             return ResponseEntity.status(404).body(Collections.emptyList());
         }
+        log.info("Found {} templates", templates.size());
         return ResponseEntity.status(200).body(templates);
     }
 
@@ -38,6 +47,7 @@ public class TemplateController {
                 column.setRow(row);
             }
         }
+        log.info("Saving templates.");
         Template entity = templateRepository.save(template);
         return ResponseEntity.status(201).body(entity);
     }
